@@ -1,0 +1,24 @@
+<% layout('layouts/boilerplate') %>
+
+  <div class="container mt-5">
+    <div class="row">
+      <h1 class="text-center">New Quiz</h1>
+      <div class="col-md-6 offset-md-3">
+        <form action="/createQuiz" method="post">
+          <div class="mb-3">
+            <label for="title" class="form-label">Quiz Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter quiz title" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="secretCode" class="form-label">Secret Code</label>
+            <input type="text" class="form-control" id="secretCode" name="secretCode" placeholder="Enter a secret code"
+              required>
+          </div>
+
+          <button type="submit" class="btn btn-success">Create Quiz</button>
+
+        </form>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,43 @@
+<% layout('layouts/boilerplate') %>
+
+  <!-- views/showQuiz.ejs -->
+  <div class="container">
+    <h1>
+      <%= quiz.title %>
+    </h1>
+    <ul>
+      <% quiz.questions.forEach(question=> { %>
+        <li>
+          <h3>
+            <%= question.question %>
+          </h3>
+          <ul>
+            <% question.options.forEach(option=> { %>
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    <%= option.label %>: <%= option.text %>
+                  </label>
+                </div>
+              </li>
+              <% }); %>
+          </ul>
+          <div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Show Answer
+            </button>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item">
+                <%= question.correctAnswer %>
+              </li>
+
+            </ul>
+          </div>
+
+        </li>
+        <% }); %>
+    </ul>
+
+  </div>
