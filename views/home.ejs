@@ -8,12 +8,51 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
     integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
 </head>
+<style>
+  #secretCode,
+  #topic {
+    width: 150px;
+    /* Adjust the width as needed */
+  }
+
+  #formFile {
+    width: 20%;
+  }
+</style>
 
 <body>
   <h1>Home</h1>
   <a href="/createQuiz"><button type="button" class="btn btn-primary">Create Quiz</button></a>
   <a href="/createQuiz"><button type="button" class="btn btn-primary">Add question</button></a>
   <a href="/showQuiz"><button type="button" class="btn btn-primary">Show Quiz</button></a>
+  <div class="mt-5">
+    <form action="/showQuiz" method="GET">
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="secretCode">Enter Quiz Code</label>
+        <input type="text" class="form-control" id="secretCode" name="secretCode" placeholder="Enter code" required>
+        <button type="submit" class="btn btn-primary mt-2 ">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div>
+
+    <form action="/takeQuiz" method="get">
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="topic">Enter Quiz Topic</label>
+        <input type="text" class="form-control" id="topic" name="topic" placeholder="Enter Topic" required>
+        <button type="submit" class="btn btn-primary mt-2 ">Submit</button>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="mb-3">
+    <form action="/uploadDoc" method="post">
+      <label for="formFile" class="form-label ml-2">Enter Document for testing</label>
+      <input class="form-control" type="file" id="formFile">
+    </form>
+  </div>
+
 </body>
 
 </html>

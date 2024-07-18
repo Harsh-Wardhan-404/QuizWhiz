@@ -1,43 +1,56 @@
 <% layout('layouts/boilerplate') %>
 
   <!-- views/showQuiz.ejs -->
-  <div class="container">
-    <h1>
-      <%= quiz.title %>
-    </h1>
-    <ul>
-      <% quiz.questions.forEach(question=> { %>
-        <li>
-          <h3>
-            <%= question.question %>
-          </h3>
-          <ul>
-            <% question.options.forEach(option=> { %>
-              <li>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                  <label class="form-check-label" for="flexRadioDefault1">
-                    <%= option.label %>: <%= option.text %>
-                  </label>
-                </div>
-              </li>
-              <% }); %>
-          </ul>
-          <div class="btn-group">
-            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Show Answer
-            </button>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item">
-                <%= question.correctAnswer %>
-              </li>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col text-center">
+        <h1>
+          <%= quiz.title %>
+        </h1>
+      </div>
+    </div>
 
-            </ul>
+    <form action="/showQuiz" method="POST">
+
+      <% quiz.questions.forEach(question=> { %>
+        <div class="row mb-4">
+          <div class="col-md-8 offset-md-2">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <%= question.question %>
+                </h5>
+                <p class="card-text">
+                  <% question.options.forEach(option=> { %>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="0<%= question._id %>"
+                        id="option<%= option.label %><%= question._id %>">
+                      <label class="form-check-label" for="option<%= option.label %><%= question._id %>">
+                        <%= option.label %>: <%= option.text %>
+                      </label>
+                    </div>
+                    <% }); %>
+                </p>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Show Answer
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li class="dropdown-item">
+                      <%= question.correctAnswer %>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+          <div class="width-100 d-flex align-items-center justify-content-center">
+            <button class="btn btn-success">Submit</button>
           </div>
 
-        </li>
-        <% }); %>
-    </ul>
+    </form>
 
   </div>

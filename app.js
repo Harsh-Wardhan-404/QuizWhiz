@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const express = require("express");
 const ejsMate = require('ejs-mate');
 const mongoose = require('mongoose');
 const path = require('path');
 const Question = require('./Models/question')
-
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Quiz = require("./Models/quiz");
 
 const app = express();
@@ -14,6 +16,8 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 
 const dbUrl = 'mongodb://localhost:27017/quizDB';
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
 
 // const dbUrl = 'mongodb://localhost:27017/yelp-camp';
 mongoose.connect(dbUrl);
@@ -48,11 +52,28 @@ app.post('/createQuiz', async (req, res) => {
 
 
 app.get('/showQuiz', async (req, res) => {
+  // res.send(req.body)
+  // res.send('SHOWQUIZ')
   // res.render('showQuiz')
-  const questions = await Question.findById();
+  const secretCode = req.query.secretCode;
+  try {
+    const quiz = await Quiz.findOne({ secretCode }).populate('questions');
+    if (!quiz) {
+      return res.status(404).send('Quiz not found')
+    }
+    res.render('showQuiz', { quiz })
+  } catch (e) {
+    console.log('Error fetching quiz', e.message);
+    res.status(500).send('Error fetching quiz')
+  }
+
   // console.log(questions.options);
-  res.render('showQuiz', { questions })
+  // res.render('showQuiz', { questions })
   // res.send("SHOW QUIZ")
+})
+
+app.post('/showQuiz', async (req, res) => {
+  res.send(req.body);
 })
 
 app.get('/:quizId/createQuestion', async (req, res) => {
@@ -100,6 +121,48 @@ app.post('/:quizId/createQuestion', async (req, res) => {
     res.status(500).send('Error saving question');
   }
 
+})
+
+app.get('/takeQuiz', async (req, res) => {
+  const { topic } = req.query;
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const prompt = `Create 10 MCQs on ${topic} for testing me and return these in JSON format. The JSON should have the following structure:
+  [
+    {
+      "question": "What is ...?",
+      "options": [
+        {"label": "a", "text": "Option 1"},
+        {"label": "b", "text": "Option 2"},
+        {"label": "c", "text": "Option 3"},
+        {"label": "d", "text": "Option 4"}
+      ],
+      "correctAnswer": "a"
+    },
+    ...
+  ]`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const rawText = response.text();
+    const cleanText = rawText.replace(/```json|```/g, '').trim();
+    const questions = JSON.parse(cleanText);
+    // res.json(questions)
+    res.render('showGeneratedQuiz', { questions })
+    // res.render('showGeneratedQuiz', { questions });
+  } catch (error) {
+    console.error("Error generating questions:", error.message);
+    res.status(500).send("Error generating questions");
+  }
+});
+
+
+app.post('/uploadDoc', async (req, res) => {
+  //To do
+  //   1) Add multer to Project
+  // 2) Implement PDF to Chat with gemini
+  // 3) parse it into questions
+  // 4) Finishing the job
 })
 
 // app.post('/createQuestion/:quizId', async (req, res) => {
