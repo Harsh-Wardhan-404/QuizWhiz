@@ -7,6 +7,10 @@ const path = require('path');
 const Question = require('./Models/question')
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Quiz = require("./Models/quiz");
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
+const fs = require('fs');
+const pdfParse = require('pdf-parse');
 
 const app = express();
 
@@ -72,9 +76,55 @@ app.get('/showQuiz', async (req, res) => {
   // res.send("SHOW QUIZ")
 })
 
-app.post('/showQuiz', async (req, res) => {
-  res.send(req.body);
+app.post('/uploadDoc', async (req, res) => {
+  res.send(req.file)
 })
+
+app.post('/createCustomQuiz', upload.single("baseDoc"), async (req, res) => {
+  // if (!req.file) {
+  // res.redirect('/uploadDoc')
+  const { mimetype, path: filePath } = req.file;
+  if (mimetype != 'application/pdf') {
+    return res.status(400).send('Only PDF files accepted');
+  }
+  try {
+    const dataBuffer = fs.readFileSync(filePath);
+    const pdfData = await pdfParse(dataBuffer);
+    const extractedText = pdfData.text;
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = `Create 10 MCQs based on the following text: "${extractedText}" and return these in JSON format. The JSON should have the following structure:
+    [
+      {
+        "question": "What is ...?",
+        "options": [
+          {"label": "a", "text": "Option 1"},
+          {"label": "b", "text": "Option 2"},
+          {"label": "c", "text": "Option 3"},
+          {"label": "d", "text": "Option 4"}
+        ],
+        "correctAnswer": "a"
+      },
+      ...
+    ]`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const rawText = response.text();
+    const cleanText = rawText.replace(/```json|```/g, '').trim();
+    const questions = JSON.parse(cleanText);
+    res.render('showGeneratedQuiz', { questions })
+  }
+  catch (e) {
+    console.console.error("Error processing the pdf", e.message);
+    res.status(500).send("Error processing the pdf");
+  } finally {
+    fs.unlinkSync(filePath);
+  }
+  //https://gemini.google.com/app/a0ac5df3ebfbc6fa?hl=en-IN
+
+})
+
+
 
 app.get('/:quizId/createQuestion', async (req, res) => {
   // res.send('quizId/createQuestion')
@@ -163,37 +213,10 @@ app.post('/uploadDoc', async (req, res) => {
   // 2) Implement PDF to Chat with gemini
   // 3) parse it into questions
   // 4) Finishing the job
+
 })
 
-// app.post('/createQuestion/:quizId', async (req, res) => {
-//   // const { quizId } = req.params;
-//   // const { question, opt1, opt2, opt3, opt4, correctAnswer } = req.body;
-//   // try {
-//   //   const newQuestion = new Question({
-//   //     question,
-//   //     options: [
-//   //       { label: 'a', text: opt1 },
-//   //       { label: 'b', text: opt2 },
-//   //       { label: 'c', text: opt3 },
-//   //       { label: 'd', text: opt4 },
-//   //     ],
-//   //     correctAnswer,
-//   //     quiz: quizId
-//   //   });
 
-//   //   await newQuestion.save();
-
-//   //   const quiz = await Quiz.findById(quizId);
-//   //   quiz.questions.addToSet(newQuestion._id);
-//   //   await quiz.save();
-
-//   //   res.redirect(`/createQuestion/${quizId}?success=true`);
-//   //   // alert("Question created")
-//   // } catch (e) {
-//   //   console.log('Error saving question', e.message);
-//   //   res.status(500).send('Error saving question');
-//   // }
-// })
 
 app.listen(3000, () => {
   console.log('Serving on 3000');

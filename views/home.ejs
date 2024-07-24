@@ -42,14 +42,14 @@
         <input type="text" class="form-control" id="topic" name="topic" placeholder="Enter Topic" required>
         <button type="submit" class="btn btn-primary mt-2 ">Submit</button>
       </div>
-
     </form>
   </div>
 
   <div class="mb-3">
-    <form action="/uploadDoc" method="post">
+    <form action="/createCustomQuiz" method="POST" enctype="multipart/form-data">
       <label for="formFile" class="form-label ml-2">Enter Document for testing</label>
-      <input class="form-control" type="file" id="formFile">
+      <input class="form-control" type="file" id="formFile" name="baseDoc">
+      <button type="submit" class="btn btn-primary mt-2 ">Submit</button>
     </form>
   </div>
 
