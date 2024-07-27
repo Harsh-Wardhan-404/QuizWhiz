@@ -23,6 +23,11 @@ const questionSchema = new Schema({
     required: true
   },
 
+  marks: {
+    type: Number,
+    required: true,
+  },
+
   // quiz: {
   //   type: Schema.Types.ObjectId,
   //   ref: 'Quiz',

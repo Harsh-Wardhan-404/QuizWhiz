@@ -17,6 +17,7 @@ const app = express();
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: true }))
 
 const dbUrl = 'mongodb://localhost:27017/quizDB';
@@ -65,7 +66,7 @@ app.get('/showQuiz', async (req, res) => {
     if (!quiz) {
       return res.status(404).send('Quiz not found')
     }
-    res.render('showQuiz', { quiz })
+    res.render('showQuiz', { quiz, submitted: false, userAnswers: {} });
   } catch (e) {
     console.log('Error fetching quiz', e.message);
     res.status(500).send('Error fetching quiz')
@@ -74,6 +75,28 @@ app.get('/showQuiz', async (req, res) => {
   // console.log(questions.options);
   // res.render('showQuiz', { questions })
   // res.send("SHOW QUIZ")
+})
+
+app.post('/submitQuiz/:quizId', async(req, res) => {
+  try{
+    const {quizId} = req.params;
+    const userAnswers = req.body.answers;
+    
+    let marks = 0;
+    let total = 0;
+    const quiz = await Quiz.findById(quizId).populate('questions');
+  
+    quiz.questions.forEach((question)=> {
+      total += question.marks;
+      if(userAnswers[question._id] === question.correctAnswer) marks += question.marks; 
+    });
+
+    res.render('showQuiz', {quiz, submitted: true, userAnswers, marks, total});
+  } catch(e){
+    console.log('Error submitting quiz', e.message);
+    res.status(500).send('Error submitting quiz')
+  }
+
 })
 
 app.post('/uploadDoc', async (req, res) => {
@@ -143,7 +166,7 @@ app.get('/:quizId/show', async (req, res) => {
 
 app.post('/:quizId/createQuestion', async (req, res) => {
   const { quizId } = req.params;
-  const { question, opt1, opt2, opt3, opt4, correctAnswer } = req.body;
+  const { question, opt1, opt2, opt3, opt4, correctAnswer, marks } = req.body;
 
   try {
     const newQuestion = new Question({
@@ -154,7 +177,8 @@ app.post('/:quizId/createQuestion', async (req, res) => {
         { label: 'c', text: opt3 },
         { label: 'd', text: opt4 },
       ],
-      correctAnswer
+      correctAnswer,
+      marks,
     });
     console.log("Before saving");
     const quiz = await Quiz.findById(quizId);
@@ -186,7 +210,8 @@ app.get('/takeQuiz', async (req, res) => {
         {"label": "c", "text": "Option 3"},
         {"label": "d", "text": "Option 4"}
       ],
-      "correctAnswer": "a"
+      "correctAnswer": "a",
+      "marks": "1",
     },
     ...
   ]`;
@@ -205,6 +230,7 @@ app.get('/takeQuiz', async (req, res) => {
     res.status(500).send("Error generating questions");
   }
 });
+
 
 
 app.post('/uploadDoc', async (req, res) => {

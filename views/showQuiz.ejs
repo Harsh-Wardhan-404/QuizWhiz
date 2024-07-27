@@ -3,54 +3,77 @@
   <!-- views/showQuiz.ejs -->
   <div class="container mt-5">
     <div class="row">
-      <div class="col text-center">
+      <div class="col text-center mb-2">
         <h1>
           <%= quiz.title %>
         </h1>
       </div>
     </div>
+    
 
-    <form action="/showQuiz" method="POST">
+    <% if(submitted) {%>
+    
+    <div class="marks-container d-flex flex-row-reverse ">
+      <div class="marks-circle">
+      <b><p>Total marks : <br> <%= marks%> / <%= total%></p></b>
+      </div>
+    </div>
 
-      <% quiz.questions.forEach(question=> { %>
+    <%}%>
+
+
+    <form action="/submitQuiz/<%= quiz._id %>" method="POST">
+
+      <% quiz.questions.forEach((question, index) => { %>
         <div class="row mb-4">
           <div class="col-md-8 offset-md-2">
             <div class="card">
               <div class="card-body">
+              <div class="d-flex justify-content-between">
                 <h5 class="card-title">
                   <%= question.question %>
                 </h5>
+                <span class="marks">Marks: <%= question.marks%></span>
+              </div>
                 <p class="card-text">
                   <% question.options.forEach(option=> { %>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="0<%= question._id %>"
-                        id="option<%= option.label %><%= question._id %>">
-                      <label class="form-check-label" for="option<%= option.label %><%= question._id %>">
-                        <%= option.label %>: <%= option.text %>
-                      </label>
+
+                    <% 
+                    let className = 'neutral';
+                    if (submitted) {
+                      if (userAnswers[question._id] === option.label) {
+                        className = (option.label === question.correctAnswer) ? 'correct' : 'incorrect';
+                      } else if (option.label === question.correctAnswer) {
+                        className = 'correct';
+                      }
+                    }
+                  %>
+
+                    <div class="form-check <%= className%> mb-2 ">
+                      <label>
+                            <input type="radio" name="answers[<%= question._id %>]" value="<%= option.label %>"
+                            <% if (submitted && userAnswers[question._id] === option.label) { %> 
+                                checked 
+                            <% } %> 
+                            />
+                            <%= option.text %>
+                        </label>
                     </div>
                     <% }); %>
                 </p>
-                <div class="btn-group">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    Show Answer
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li class="dropdown-item">
-                      <%= question.correctAnswer %>
-                    </li>
-                  </ul>
-                </div>
+                
+
+
               </div>
             </div>
           </div>
         </div>
         <% }); %>
-          <div class="width-100 d-flex align-items-center justify-content-center">
+       <% if(!submitted){%> 
+          <div class=" mb-3 width-100 d-flex align-items-center justify-content-center">
             <button class="btn btn-success">Submit</button>
           </div>
-
+      <%}%>
     </form>
 
   </div>
