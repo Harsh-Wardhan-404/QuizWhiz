@@ -1,0 +1,27 @@
+<% layout('layouts/boilerplate') %>
+
+  <main class="container d-flex justify-content-center align-items-center" style="margin-top: 5rem;">
+    <div class="card shadow" style="width: 100%; max-width: 350px; margin: auto; padding: 20px; border-radius: 10px;">
+      <div class="card-body">
+        <h5 class="card-title text-center">Login</h5>
+        <form action="/login" method="POST" class="validated-form" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="text" id="email" name="email" autofocus required>
+            <div class="valid-feedback">Looks good!</div>
+            <div class="invalid-feedback">Enter Email.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" type="password" id="password" name="password" required>
+            <div class="valid-feedback">Looks good!</div>
+            <div class="invalid-feedback">Enter a Password.</div>
+          </div>
+          <div class="d-grid gap-2">
+            <button class="btn btn-success btn-block">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
