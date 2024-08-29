@@ -1,30 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<% layout('layouts/boilerplate')%>
+  <div class="d-flex mt-4">
+    <a href="/createQuiz"><button type="button" class="btn btn-primary ml-2">Create Quiz</button></a>
+    <a href="/createQuiz" class="ml-2"><button type="button" class="btn btn-primary ml-3">Add question</button></a>
+    <a href="/showQuiz"><button type="button" class="btn btn-primary">Show Quiz</button></a>
+  </div>
+  <div class="d-flex flex-row-reverse">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuizUp</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
-    integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-</head>
-<style>
-  #secretCode,
-  #topic {
-    width: 150px;
-    /* Adjust the width as needed */
-  }
-
-  #formFile {
-    width: 20%;
-  }
-</style>
-
-<body>
-  <h1>Home</h1>
-  <a href="/createQuiz"><button type="button" class="btn btn-primary">Create Quiz</button></a>
-  <a href="/createQuiz"><button type="button" class="btn btn-primary">Add question</button></a>
-  <a href="/showQuiz"><button type="button" class="btn btn-primary">Show Quiz</button></a>
+  </div>
   <div class="mt-5">
     <form action="/showQuiz" method="GET">
       <div class="form-group mx-sm-3 mb-2">
@@ -49,10 +31,6 @@
     <form action="/createCustomQuiz" method="POST" enctype="multipart/form-data">
       <label for="formFile" class="form-label ml-2">Enter Document for testing</label>
       <input class="form-control" type="file" id="formFile" name="baseDoc">
-      <button type="submit" class="btn btn-primary mt-2 ">Submit</button>
+      <button type="submit" class="btn btn-primary mt-2 ml-3">Submit</button>
     </form>
   </div>
-
-</body>
-
-</html>

@@ -8,7 +8,7 @@
   color: white;
 }
 
-.neutral{
+.neutral {
   background-color: white;
   color: black;
 }
@@ -38,26 +38,26 @@
 }
 
 .marks-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-  }
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
 
-  .marks-circle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 150px;
-    height: 150px;
-    border: 3px solid #007bff;
-    border-radius: 50%;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+.marks-circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  border: 3px solid #007bff;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-  .marks-circle p {
-    margin: 0;
-    font-size: 18px;
-    text-align: center;
-  }
+.marks-circle p {
+  margin: 0;
+  font-size: 18px;
+  text-align: center;
+}
